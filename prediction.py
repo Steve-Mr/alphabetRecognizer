@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mimage
 
 model_path = '/home/maary/文档/savedModel'
-image_path = '/home/maary/文档/Bonus/Sample014/img014-011.png'
+image_path = '/home/maary/文档/project2/Sample014/img014-00011.png'
 
 model = load_model(model_path)
 

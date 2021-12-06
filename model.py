@@ -34,18 +34,20 @@ num_classes = len(train_ds.class_names)
 print(class_names)
 
 AUTOTUNE = tf.data.AUTOTUNE
-train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+train_ds = train_ds.cache().shuffle(buffer_size=1024).prefetch(buffer_size=AUTOTUNE)
+# train_ds = train_ds.shuffle(buffer_size=AUTOTUNE)
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
-# data_augmentation = tf.keras.Sequential(
-#     [
-#         tf.keras.layers.RandomRotation(0.2),
-#         tf.keras.layers.RandomZoom(
-#             0.3,
-#             fill_mode='nearest',
-#             interpolation='nearest'),
-#     ]
-# )
+data_augmentation = tf.keras.Sequential(
+    [
+        tf.keras.layers.Rescaling(1. / 255),
+        tf.keras.layers.RandomRotation(0.2),
+        tf.keras.layers.RandomZoom(
+            0.3,
+            fill_mode='nearest',
+            interpolation='nearest'),
+    ]
+)
 #
 # augmented_ds = train_ds.map(
 #     lambda x, y: (data_augmentation(x, training=True), y))
@@ -62,15 +64,16 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
 model = tf.keras.Sequential([
     tf.keras.Input(shape=(128, 128, 3)),
-    #tf.keras.layers.Resizing(64, 64),
-    tf.keras.layers.RandomRotation(0.2),
-    tf.keras.layers.RandomZoom(
-        0.3,
-        fill_mode='nearest',
-        interpolation='nearest'),
-    tf.keras.layers.Rescaling(1. / 255),
+    data_augmentation,
+    # tf.keras.layers.Rescaling(1. / 255),
+
+    tf.keras.layers.Conv2D(8, 3, activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
 
     tf.keras.layers.Conv2D(16, 3, activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
+
+    tf.keras.layers.Conv2D(32, 3, activation='relu'),
     tf.keras.layers.MaxPooling2D(),
 
     tf.keras.layers.Conv2D(32, 3, activation='relu'),
@@ -79,21 +82,15 @@ model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(64, 3, activation='relu'),
     tf.keras.layers.MaxPooling2D(),
 
-    tf.keras.layers.Conv2D(64, 3, activation='relu', padding='same'),
-    tf.keras.layers.MaxPooling2D(),
-
-    tf.keras.layers.Conv2D(128, 3, activation='relu'),
-    tf.keras.layers.MaxPooling2D(),
-
-    tf.keras.layers.Dropout(0.5),
     tf.keras.layers.Flatten(),
     tf.keras.layers.Dense(256, activation='relu'),
-    tf.keras.layers.Dense(num_classes)
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dense(num_classes, activation='softmax'),
 ])
 
 model.compile(
     optimizer='adam',
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=False),
     metrics=['accuracy'])
 
 model.summary()

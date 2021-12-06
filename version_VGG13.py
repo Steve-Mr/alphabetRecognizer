@@ -39,6 +39,13 @@ val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
 model = tf.keras.Sequential([
     tf.keras.Input(shape=(128, 128, 3)),
+    #tf.keras.layers.Resizing(64, 64),
+    # tf.keras.layers.RandomRotation(0.2),
+    # tf.keras.layers.RandomZoom(
+    #     0.3,
+    #     fill_mode='nearest',
+    #     interpolation='nearest'),
+    tf.keras.layers.Rescaling(1. / 255),
 
     tf.keras.layers.Conv2D(16, 3, activation='relu', padding='same'),
     tf.keras.layers.Conv2D(16, 3, activation='relu', padding='same'),
@@ -57,7 +64,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.MaxPooling2D(strides=2, padding='same'),
 
     tf.keras.layers.Conv2D(128, 3, activation='relu', padding='same'),
-    tf.keras.layers.Conv2D(128, 3, activation='relu', padding='same'),
+    tf.keras.layers.Conv2D(128, 3, activation='relu'),
     tf.keras.layers.MaxPooling2D(strides=2, padding='same'),
 
     tf.keras.layers.Flatten(),

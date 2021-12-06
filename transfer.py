@@ -7,17 +7,17 @@ from keras.models import load_model
 
 
 pretrained_model_path = '/home/maary/文档/savedModel/'
-batch_size = 8
+batch_size = 32
 img_height = 128
 img_width = 128
-epochs = 20
+epochs = 50
 data_dir = '/home/maary/文档/Bonus/'
 print(tf.__version__)
 print(tf.config.list_physical_devices('GPU'))
 
 model = load_model(pretrained_model_path)
 model.summary()
-model = Model(inputs=model.input, outputs=model.get_layer('flatten').output)
+model = Model(inputs=model.input, outputs=model.get_layer('dense_1').output)
 model.summary()
 
 train_ds = keras.utils.image_dataset_from_directory(
@@ -49,15 +49,17 @@ feature_extractor.trainable = False
 
 model = tf.keras.Sequential([
     feature_extractor,
-    tf.keras.layers.Dense(256, activation='relu'),
     tf.keras.layers.Dropout(0.5),
+    # tf.keras.layers.Dense(256, activation='relu'),
     tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(num_classes)
+    tf.keras.layers.Dense(128, activation='relu'),
+    # tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Dense(num_classes, activation='softmax')
 ])
 
 model.compile(
     optimizer='adam',
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=False),
     metrics=['accuracy']
 )
 
