@@ -5,19 +5,25 @@ import matplotlib.pyplot as plt
 from keras.models import Model
 from keras.models import load_model
 
+import util
 
-pretrained_model_path = '/home/maary/文档/savedModel/'
-batch_size = 32
+pretrained_model_path = '/home/maary/文档/savedModel'
+batch_size = 8
 img_height = 128
 img_width = 128
-epochs = 50
+epochs = 15
+
 data_dir = '/home/maary/文档/Bonus/'
 print(tf.__version__)
 print(tf.config.list_physical_devices('GPU'))
 
 model = load_model(pretrained_model_path)
 model.summary()
-model = Model(inputs=model.input, outputs=model.get_layer('dense_1').output)
+
+# model.get_layer('sequential_1').summary()
+model = model.get_layer('sequential_1')
+model.summary()
+model = Model(inputs=model.input, outputs=model.get_layer('max_pooling2d_4').output)
 model.summary()
 
 train_ds = keras.utils.image_dataset_from_directory(
@@ -48,12 +54,10 @@ feature_extractor = hub.KerasLayer(model, input_shape=(img_height, img_width, 3)
 feature_extractor.trainable = False
 
 model = tf.keras.Sequential([
+    tf.keras.layers.Rescaling(1. / 255),
     feature_extractor,
+    tf.keras.layers.Flatten(),
     tf.keras.layers.Dropout(0.5),
-    # tf.keras.layers.Dense(256, activation='relu'),
-    tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(128, activation='relu'),
-    # tf.keras.layers.Dropout(0.5),
     tf.keras.layers.Dense(num_classes, activation='softmax')
 ])
 
