@@ -10,6 +10,8 @@ image_path = '/home/maary/文档/project2/Sample014/img014-00011.png'
 
 model = load_model(model_path)
 
+
+
 test_image = image.load_img(image_path, target_size=(128, 128))
 plt.imshow(test_image)
 plt.show()
