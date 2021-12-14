@@ -44,6 +44,19 @@ def data_augmentation_layer():
     )
 
 
+def get_augmentation_sample(dataset, data_augmentation):
+    augmented_ds = dataset.map(
+        lambda x, y: (data_augmentation(x, training=True), y))
+    plt.figure(figsize=(10, 10))
+    for images, labels in augmented_ds.take(1):
+        for i in range(9):
+            ax = plt.subplot(3, 3, i + 1)
+            plt.imshow(images[i].numpy().astype("uint8"))
+            plt.title(augmented_ds.class_names[labels[i]])
+            plt.axis("off")
+    plt.show()
+
+
 def get_sample_image(dataset):
     plt.figure(figsize=(10, 10))
     for images, labels in dataset.take(1):
@@ -56,8 +69,8 @@ def get_sample_image(dataset):
     plt.show()
 
 
-def save_model(model, parent_dir):
-    path = os.path.join(parent_dir, 'savedModel')
+def save_model(model, parent_dir, model_name):
+    path = os.path.join(parent_dir, model_name)
     try:
         os.mkdir(path)
     except OSError as error:

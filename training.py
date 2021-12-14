@@ -6,12 +6,10 @@ batch_size = 32
 img_height = 128
 img_width = 128
 epochs = 50
+
 data_dir = '/home/maary/文档/project2/'
 
 train_ds, val_ds, num_classes = util.get_dataset(data_dir, batch_size, img_height, img_width)
-
-# augmented_ds = train_ds.map(
-#     lambda x, y: (data_augmentation(x, training=True), y))
 
 model = tf.keras.Sequential([
     tf.keras.Input(shape=(img_height, img_width, 3)),
@@ -32,6 +30,7 @@ history = model.fit(
 )
 
 parent_dir = '/home/maary/文档/'
-util.save_model(model, parent_dir)
+model_name = 'trainingSavedModel'
+util.save_model(model, parent_dir, model_name)
 
 util.visualize_history(history, epochs)

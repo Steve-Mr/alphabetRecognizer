@@ -49,5 +49,9 @@ history = model.fit(
     validation_data=val_ds
 )
 
+parent_dir = '/home/maary/文档/'
+model_name = 'transferSavedModel'
+util.save_model(model, parent_dir, model_name)
+
 util.visualize_history(history, epochs)
 
