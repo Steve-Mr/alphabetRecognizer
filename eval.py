@@ -1,10 +1,5 @@
 import tensorflow as tf
 from keras.models import load_model
-from tensorflow import keras
-from keras.preprocessing import image
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mimage
 
 import util
 
@@ -30,10 +25,8 @@ results = model.evaluate(val_ds, batch_size=batch_size)
 print("project2")
 print("test loss, test acc:", results)
 
-bonus_val_ds = keras.utils.image_dataset_from_directory(
-        bonus_path,
-        image_size=(img_height, img_width),
-        batch_size=batch_size)
+bonus_train_ds, bonus_val_ds, bonus_num_classes = util.get_dataset(bonus_path, batch_size, img_height, img_width)
+
 bonus_results = model.evaluate(bonus_val_ds, batch_size=batch_size)
 print("bonus")
 print("test loss, test acc:", bonus_results)

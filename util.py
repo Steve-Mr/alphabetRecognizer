@@ -26,7 +26,7 @@ def get_dataset(data_dir, batch_size, img_height, img_width):
     print(class_names)
 
     AUTOTUNE = tf.data.AUTOTUNE
-    train_ds = train_ds.cache().shuffle(buffer_size=1024).prefetch(buffer_size=AUTOTUNE)
+    train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
     val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
     return train_ds, val_ds, num_classes
@@ -44,16 +44,34 @@ def data_augmentation_layer():
     )
 
 
-def get_augmentation_sample(dataset, data_augmentation):
+def get_sample(dataset, data_augmentation):
     augmented_ds = dataset.map(
         lambda x, y: (data_augmentation(x, training=True), y))
-    plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(10, 10))
     for images, labels in augmented_ds.take(1):
         for i in range(9):
-            ax = plt.subplot(3, 3, i + 1)
+            bx = plt.subplot(3, 3, i + 1)
             plt.imshow(images[i].numpy().astype("uint8"))
-            plt.title(augmented_ds.class_names[labels[i]])
             plt.axis("off")
+    plt.show()
+
+
+def get_rescaling_sample(img_dir):
+    fig = plt.figure(figsize=(10, 4))
+    img = plt.imread(img_dir)
+
+    fig.add_subplot(1, 2, 1)
+    plt.title("original")
+    plt.axis("off")
+    plt.imshow(img)
+
+    rescaled = tf.keras.layers.Rescaling(1. / 255)(img)
+
+    fig.add_subplot(1, 2, 2)
+    plt.title("rescaled")
+    plt.axis("off")
+    plt.imshow(rescaled)
+
     plt.show()
 
 

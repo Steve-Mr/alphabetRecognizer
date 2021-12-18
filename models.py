@@ -5,9 +5,15 @@ import util
 from tensorflow.python.keras.engine import training
 
 
-def simple_five_layers(num_classes):
+def simple_six_layers(num_classes):
     return tf.keras.Sequential([
+        layers.Conv2D(8, 3, activation='relu'),
+        layers.MaxPooling2D(),
+
         layers.Conv2D(16, 3, activation='relu'),
+        layers.MaxPooling2D(),
+
+        layers.Conv2D(32, 3, activation='relu'),
         layers.MaxPooling2D(),
 
         layers.Conv2D(32, 3, activation='relu'),
@@ -18,7 +24,6 @@ def simple_five_layers(num_classes):
 
         layers.Flatten(),
         layers.Dropout(0.5),
-        layers.Dense(128, activation='relu'),
         layers.Dense(num_classes, activation='softmax'),
     ])
 
@@ -40,7 +45,7 @@ def leNet_inspired(num_classes):
     ])
 
 
-def simple_thirteen_layers(num_classes):
+def simple_eight_layers(num_classes):
     return tf.keras.Sequential([
         layers.Conv2D(8, 3, activation='relu'),
         layers.MaxPooling2D(),

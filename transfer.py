@@ -1,7 +1,5 @@
 import tensorflow as tf
-import tensorflow.keras as keras
 import tensorflow_hub as hub
-import matplotlib.pyplot as plt
 from keras.models import Model
 from keras.models import load_model
 
@@ -18,7 +16,6 @@ data_dir = '/home/maary/文档/Bonus/'
 model = load_model(pretrained_model_path)
 model.summary()
 
-# model.get_layer('sequential_1').summary()
 model = model.get_layer('sequential_1')
 model.summary()
 model = Model(inputs=model.input, outputs=model.get_layer('max_pooling2d_4').output)
@@ -39,7 +36,7 @@ model = tf.keras.Sequential([
 
 model.compile(
     optimizer='adam',
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=False),
+    loss=tf.losses.SparseCategoricalCrossentropy(),
     metrics=['accuracy']
 )
 
